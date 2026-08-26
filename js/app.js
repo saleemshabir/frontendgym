@@ -1,5 +1,4 @@
-const API = 'http://localhost:5000/api';
-
+const API = 'https://backendgym-ifvj.vercel.app/api';
 // =========== NAVIGATION ===========
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
