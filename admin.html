@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IRONCORE — Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .admin-badge{
+      background:var(--accent);color:var(--black);
+      font-size:9px;font-weight:800;letter-spacing:1.5px;
+      text-transform:uppercase;padding:2px 8px;border-radius:2px;
+    }
+    .user-menu{
+      display:flex;align-items:center;gap:10px;
+      padding:8px 14px;background:var(--dark2);
+      border:1px solid var(--dark3);border-radius:4px;
+      cursor:pointer;transition:border-color 0.2s;
+    }
+    .user-menu:hover{border-color:var(--gray2);}
+    .user-avatar{
+      width:30px;height:30px;border-radius:50%;
+      background:var(--accent);color:var(--black);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:12px;
+    }
+    .user-name{font-size:13px;font-weight:600;}
+    .user-role{font-size:10px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;}
+    .logout-btn{
+      background:none;border:1px solid var(--danger);
+      color:var(--danger);border-radius:3px;padding:6px 12px;
+      font-size:11px;font-weight:700;letter-spacing:1px;
+      text-transform:uppercase;cursor:pointer;transition:all 0.15s;
+    }
+    .logout-btn:hover{background:rgba(255,23,68,0.1);}
+    .users-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+    .user-card{
+      background:var(--dark2);border:1px solid var(--dark3);
+      border-radius:4px;padding:20px;transition:border-color 0.2s;
+    }
+    .user-card:hover{border-color:var(--gray2);}
+    .user-card-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+    .user-card-avatar{
+      width:44px;height:44px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:18px;flex-shrink:0;
+    }
+    .user-card-avatar.admin{background:rgba(232,255,0,0.15);color:var(--accent);}
+    .user-card-avatar.user{background:rgba(0,212,255,0.15);color:var(--accent2);}
+    .user-card-name{font-weight:700;font-size:15px;}
+    .user-card-email{font-size:12px;color:var(--gray);}
+    .user-card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+    .meta-tag{
+      font-size:10px;font-weight:700;letter-spacing:1px;
+      text-transform:uppercase;padding:3px 8px;border-radius:2px;
+    }
+    .meta-tag.admin-tag{background:rgba(232,255,0,0.1);color:var(--accent);}
+    .meta-tag.user-tag{background:rgba(0,212,255,0.1);color:var(--accent2);}
+    .meta-tag.active-tag{background:rgba(0,230,118,0.1);color:var(--success);}
+    .meta-tag.inactive-tag{background:rgba(136,136,136,0.1);color:var(--gray);}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">🏋️ IRONCORE</div>
+    <div class="logo-sub">Admin Panel</div>
+    <div class="logo-bar"></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Overview</div>
+    <div class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span> Dashboard</div>
+    <div class="nav-section-title">Management</div>
+    <div class="nav-item" data-page="members"><span class="nav-icon">👥</span> Members</div>
+    <div class="nav-item" data-page="trainers"><span class="nav-icon">🏆</span> Trainers</div>
+    <div class="nav-item" data-page="memberships"><span class="nav-icon">🎫</span> Membership Plans</div>
+    <div class="nav-item" data-page="classes"><span class="nav-icon">🧘</span> Classes</div>
+    <div class="nav-section-title">Facility</div>
+    <div class="nav-item" data-page="equipment"><span class="nav-icon">🏗️</span> Equipment</div>
+    <div class="nav-item" data-page="attendance"><span class="nav-icon">📅</span> Attendance</div>
+    <div class="nav-item" data-page="payments"><span class="nav-icon">💳</span> Payments</div>
+    <div class="nav-section-title">System</div>
+    <div class="nav-item" data-page="users"><span class="nav-icon">🔑</span> Manage Users</div>
+  </nav>
+  <div class="sidebar-footer">Admin Panel &nbsp;|&nbsp; v1.0</div>
+</aside>
+
+<div class="main-content">
+  <div class="topbar">
+    <div class="page-title" id="topbar-title">Dashboard</div>
+    <div class="topbar-actions">
+      <span class="admin-badge">Admin</span>
+      <div class="user-menu" id="user-menu-btn">
+        <div class="user-avatar" id="topbar-avatar">A</div>
+        <div>
+          <div class="user-name" id="topbar-name">Admin</div>
+          <div class="user-role">Administrator</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div><h1>Admin Dashboard</h1><p id="welcome-msg">Welcome back!</p></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card yellow"><span class="stat-icon">👥</span><div class="stat-value" id="stat-members">--</div><div class="stat-label">Total Members</div></div>
+        <div class="stat-card blue"><span class="stat-icon">🏆</span><div class="stat-value" id="stat-trainers">--</div><div class="stat-label">Active Trainers</div></div>
+        <div class="stat-card red"><span class="stat-icon">📅</span><div class="stat-value" id="stat-today">--</div><div class="stat-label">Today's Check-ins</div></div>
+        <div class="stat-card green"><span class="stat-icon">💰</span><div class="stat-value" id="stat-revenue">--</div><div class="stat-label">Total Revenue (₹)</div></div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent Members</div></div>
+          <div class="recent-list" id="recent-members"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent Payments</div></div>
+          <div class="recent-list" id="recent-payments"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBERS -->
+    <div class="page" id="page-members">
+      <div class="page-header">
+        <div><h1>Members</h1><p>Manage all gym memberships</p></div>
+        <button class="btn btn-primary" onclick="openModal('member')">+ Add Member</button>
+      </div>
+      <div class="search-bar"><input class="search-input" placeholder="Search members..." oninput="filterTable('members-table',this.value)"/></div>
+      <div class="card"><div class="table-wrapper"><table id="members-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody id="members-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- TRAINERS -->
+    <div class="page" id="page-trainers">
+      <div class="page-header">
+        <div><h1>Trainers</h1><p>Manage coaching staff</p></div>
+        <button class="btn btn-primary" onclick="openModal('trainer')">+ Add Trainer</button>
+      </div>
+      <div class="search-bar"><input class="search-input" placeholder="Search trainers..." oninput="filterTable('trainers-table',this.value)"/></div>
+      <div class="card"><div class="table-wrapper"><table id="trainers-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Specialization</th><th>Experience</th><th>Salary</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="trainers-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- MEMBERSHIPS -->
+    <div class="page" id="page-memberships">
+      <div class="page-header">
+        <div><h1>Membership Plans</h1><p>Manage pricing and plans</p></div>
+        <button class="btn btn-primary" onclick="openModal('membership')">+ Add Plan</button>
+      </div>
+      <div class="card"><div class="table-wrapper"><table id="memberships-table">
+        <thead><tr><th>Plan Name</th><th>Duration</th><th>Price (₹)</th><th>Gym Access</th><th>Personal Trainer</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="memberships-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- EQUIPMENT -->
+    <div class="page" id="page-equipment">
+      <div class="page-header">
+        <div><h1>Equipment</h1><p>Track gym equipment</p></div>
+        <button class="btn btn-primary" onclick="openModal('equipment')">+ Add Equipment</button>
+      </div>
+      <div class="search-bar"><input class="search-input" placeholder="Search equipment..." oninput="filterTable('equipment-table',this.value)"/></div>
+      <div class="card"><div class="table-wrapper"><table id="equipment-table">
+        <thead><tr><th>Name</th><th>Category</th><th>Brand</th><th>Qty</th><th>Condition</th><th>Location</th><th>Actions</th></tr></thead>
+        <tbody id="equipment-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- CLASSES -->
+    <div class="page" id="page-classes">
+      <div class="page-header">
+        <div><h1>Classes</h1><p>Manage group fitness classes</p></div>
+        <button class="btn btn-primary" onclick="openModal('class')">+ Add Class</button>
+      </div>
+      <div class="card"><div class="table-wrapper"><table id="classes-table">
+        <thead><tr><th>Class</th><th>Trainer</th><th>Day</th><th>Time</th><th>Category</th><th>Enrolled/Cap</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="classes-tbody"><tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="page" id="page-attendance">
+      <div class="page-header">
+        <div><h1>Attendance</h1><p>Track member check-ins</p></div>
+        <button class="btn btn-primary" onclick="openModal('attendance')">+ Check In</button>
+      </div>
+      <div class="card"><div class="table-wrapper"><table id="attendance-table">
+        <thead><tr><th>Member</th><th>Date</th><th>Check In</th><th>Check Out</th><th>Duration</th><th>Actions</th></tr></thead>
+        <tbody id="attendance-tbody"><tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="page" id="page-payments">
+      <div class="page-header">
+        <div><h1>Payments</h1><p>Track all transactions</p></div>
+        <button class="btn btn-primary" onclick="openModal('payment')">+ Record Payment</button>
+      </div>
+      <div class="card"><div class="table-wrapper"><table id="payments-table">
+        <thead><tr><th>Invoice</th><th>Member</th><th>Amount (₹)</th><th>Type</th><th>Method</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="payments-tbody"><tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- USERS MANAGEMENT -->
+    <div class="page" id="page-users">
+      <div class="page-header">
+        <div><h1>Manage Users</h1><p>View and manage all system accounts</p></div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header"><div class="card-title">System Accounts</div></div>
+        <div class="users-grid" id="users-grid"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="modal-container"></div>
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script>
+  // ── Auth guard ──
+  const token = localStorage.getItem('gym_token');
+  const user  = JSON.parse(localStorage.getItem('gym_user') || 'null');
+  if (!token || !user || user.role !== 'admin') { window.location.href = '/login'; }
+
+  // ── Topbar user info ──
+  if (user) {
+    document.getElementById('topbar-name').textContent = user.name;
+    document.getElementById('topbar-avatar').textContent = user.name[0].toUpperCase();
+    document.getElementById('welcome-msg').textContent = `Welcome back, ${user.name}! You have full admin access.`;
+  }
+
+  function logout() {
+    localStorage.removeItem('gym_token');
+    localStorage.removeItem('gym_user');
+    window.location.href = '/login';
+  }
+
+  // ── Load users page ──
+  async function loadUsersPage() {
+    const res = await apiFetch('/auth/users');
+    const grid = document.getElementById('users-grid');
+    if (!res.success || !res.data?.length) {
+      grid.innerHTML = '<p style="color:var(--gray);padding:20px">No users found.</p>';
+      return;
+    }
+    grid.innerHTML = res.data.map(u => `
+      <div class="user-card">
+        <div class="user-card-header">
+          <div class="user-card-avatar ${u.role}">${u.name[0].toUpperCase()}</div>
+          <div>
+            <div class="user-card-name">${u.name}</div>
+            <div class="user-card-email">${u.email}</div>
+          </div>
+        </div>
+        <div class="user-card-meta">
+          <span class="meta-tag ${u.role}-tag">${u.role === 'admin' ? '🔑 Admin' : '👤 Member'}</span>
+          <span class="meta-tag ${(u.status||'Active').toLowerCase()}-tag">${u.status || 'Active'}</span>
+          ${u.phone ? `<span class="meta-tag" style="background:var(--dark3);color:var(--gray)">${u.phone}</span>` : ''}
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--gray2);">
+          Joined: ${new Date(u.createdAt).toLocaleDateString('en-IN')}
+          ${u.lastLogin ? '<br>Last login: ' + new Date(u.lastLogin).toLocaleString('en-IN') : ''}
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button class="btn btn-sm btn-secondary" onclick="toggleUserStatus('${u._id}','${u.status||'Active'}')">
+            ${u.status === 'Inactive' ? '✅ Activate' : '⏸ Deactivate'}
+          </button>
+          <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">🗑 Delete</button>
+        </div>
+      </div>`).join('');
+  }
+
+  async function toggleUserStatus(id, current) {
+    const newStatus = current === 'Inactive' ? 'Active' : 'Inactive';
+    const res = await apiFetch(`/auth/users/${id}`, 'PUT', { status: newStatus });
+    if (res.success) { showToast(`User ${newStatus}`, 'success'); loadUsersPage(); }
+    else showToast(res.message, 'error');
+  }
+
+  async function deleteUser(id) {
+    if (!confirm('Delete this user account?')) return;
+    const res = await apiFetch(`/auth/users/${id}`, 'DELETE');
+    if (res.success) { showToast('User deleted', 'success'); loadUsersPage(); }
+    else showToast(res.message, 'error');
+  }
+
+  // override loadPage to handle users
+  const _origLoad = typeof loadPage === 'function' ? loadPage : null;
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (item.dataset.page === 'users') loadUsersPage();
+    });
+  });
+
+  // Load dashboard on start
+  loadDashboard();
+</script>
+</body>
+</html>
